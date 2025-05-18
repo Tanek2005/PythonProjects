@@ -3,17 +3,24 @@ import os
 import pandas as pd
 from flask import Flask,request,render_template
 
-fileName='contacts.csv'
+import sys
+from pathlib import Path
+
+
+
+library_path = Path(__file__).resolve().parent.parent/ "Library"
+sys.path.append(str(library_path))
+
+import contact_manager
+
+
 
 app=Flask(__name__)
 
 #############################################################################################
 header = ['name', 'phone_no', 'email']
 #############################################################################################
-    
 
-
-#############################################################################################
 def searchbyName(fileName):
     
     try:
@@ -30,108 +37,39 @@ def searchbyName(fileName):
                     continue
     except Exception as e:
         print(f"No file found of the name {fileName}",e)
-#############################################################################################
-
 
 @app.route('/update', methods=['GET', 'POST'])
 def updateContact():
-    fileName = 'contacts.csv'   
+     if request.method == 'POST':
+          contactName = request.form['Search']
+          newName = request.form.get('name')
+          newPhone = request.form.get('number')
+          newEmail = request.form.get('email')
+          contact_manager.updateContact(contactName,newName,newPhone,newEmail)
+          
+     return render_template('update.html')
 
-    if request.method == 'POST':
-        
-        with open(fileName, mode='r', newline='') as infile:
-            reader = csv.reader(infile)
-            rows = list(reader)
-
-        contactName = request.form['Search']
-        for row in rows:
-            if row[0].strip().lower() == contactName.strip().lower():
-           
-                newName = request.form.get('name')
-                newPhone = request.form.get('number')
-                newEmail = request.form.get('email')
-
-                if newName:
-                    row[0] = newName
-            
-                if newPhone:
-                    row[1] = newPhone
-
-                if newEmail:
-                    row[2] = newEmail
-                break  
-
-        with open(fileName, mode='w', newline='') as outfile:
-            writer = csv.writer(outfile)
-            writer.writerows(rows)
-
-    return render_template("update.html")
-
-
-#############################################################################################
 
 @app.route('/add',methods=['GET','POST'])
 def addContact():
-   
-   
+    
     if request.method=='POST':
-
-        with open(fileName, mode='a', newline='') as file:
-                    writer = csv.writer(file)
-                    if file.tell() == 0:
-                        writer.writerow(header)
-                    name = request.form['name']
-                    phone_no = request.form['phone']
-                    email = request.form['email']
-                    writer.writerow([name, phone_no, email])
+         name = request.form['name']
+         phone_no = request.form['phone']
+         email = request.form['email']
+         contact_manager.addContact(name,phone_no,email)
   
     return render_template("addcontact.html")
                     
-                
-    
-       
 
-#############################################################################################
 @app.route('/delete', methods=['GET', 'POST'])
 def deleteContact():
-    fileName = 'contacts.csv'  
-    message = ''
-    
     if request.method == 'POST':
         name = request.form['name']
-        rows = []
+        contact_manager.deleteContact(name)
 
-        with open(fileName, mode='r', newline='') as file:
-            reader = csv.reader(file)
-            rows = [row for row in reader]
+    return render_template("delete.html")
 
-
-        header, data = rows[0], rows[1:]
-
-        updated_data = [row for row in data if row[0].strip().lower() != name.strip().lower()]
-
-        if len(data) == len(updated_data):
-            message = "Contact not found."
-        else:
-            
-            with open(fileName, mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(header)
-                writer.writerows(updated_data)
-            message = "Contact deleted successfully."
-
-    return render_template("delete.html", message=message)
-        
-    
-#############################################################################################
-def readFile():
-    try:
-        df = pd.read_csv(fileName)
-        print(df)
-    except FileNotFoundError:
-        print(f"File '{fileName}' does not exist.")
-    except Exception as e:
-                print("Error while reading the file:", e)
 
 #############################################################################################
 @app.route('/')

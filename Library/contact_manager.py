@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from flask import Flask,request,render_template
 
-
+fileName = 'contacts.csv'
 
 #############################################################################################
 header = ['name', 'phone_no', 'email']
@@ -12,7 +12,7 @@ header = ['name', 'phone_no', 'email']
 
 # Common Functions
 
-def readFile(fileName):
+def readFile():
     try:
         df = pd.read_csv(fileName)
         print(df)
@@ -28,7 +28,7 @@ def readFile(fileName):
 #############################################################################################
 
 
-def updateContact(fileName,name,newName,newPhone,newEmail):
+def updateContact(name,newName,newPhone,newEmail):
   
 
         
@@ -58,7 +58,7 @@ def updateContact(fileName,name,newName,newPhone,newEmail):
    
 #############################################################################################
 
-def addContact(fileName,name,phone_no,email):
+def addContact(name,phone_no,email):
    
    
   
@@ -66,9 +66,6 @@ def addContact(fileName,name,phone_no,email):
                     writer = csv.writer(file)
                     if file.tell() == 0:
                         writer.writerow(header)
-                    name = request.form['name']
-                    phone_no = request.form['phone']
-                    email = request.form['email']
                     writer.writerow([name, phone_no, email])
 
                 
@@ -77,7 +74,7 @@ def addContact(fileName,name,phone_no,email):
 
 #############################################################################################
 
-def deleteContact(fileName,name):
+def deleteContact(name):
      
    
         rows = []
