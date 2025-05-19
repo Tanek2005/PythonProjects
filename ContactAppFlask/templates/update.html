@@ -20,11 +20,11 @@
 <body>
         <div class="box">Update Contact
         <form method="post" action="/update">
-            Search By name <input type="text" name="Search" > <button type="submit">go</button> <br>
-            New name <input type="text" name="name" > <br>
-            New Phone <input type="number" name="number"> <br>
-            New Email <input type="email" name="email"> <br>
-            <button type="submit" >Update Contact</button>
+            Search By name <input type="text" name="Search" value="{{name|e}}" ><button type="submit" name="action" value="search">go</button> <br>
+            Name <input type="text" name="name" value="{{name|e}}" > <br>
+            Phone <input type="text" name="phoneNo" value="{{phoneNo|e}}"> <br>
+            New Email <input type="text" name="email" value="{{email|e}}"> <br>
+            <button type="submit" name="action" value="update" >Update Contact</button>
         </form>
           
     </div>

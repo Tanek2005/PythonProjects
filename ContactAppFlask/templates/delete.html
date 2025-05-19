@@ -20,10 +20,12 @@
 </head>
 <body>
         <div class="box">Delete Contact
-        <form method="post" action="/delete">
-        Name : <input type="text" name="name" > <br>
-            <button type="submit" >Delete</button>
-        </form>
+         <form method="post" action="/delete">
+            Search By name <input type="text" name="Search" value="{{name|e}}" ><button type="submit" name="action" value="search">go</button> <br>
+            Name <input type="text" name="name" value="{{name|e}}" > <br>
+            Phone <input type="text" name="phoneNo" value="{{phoneNo|e}}"> <br>
+            Email <input type="text" name="email" value="{{email|e}}"> <br>
+            <button type="submit" name="action" value="delete" >delete</button>
           
     </div>
 </body>
