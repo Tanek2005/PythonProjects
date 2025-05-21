@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Contact</title>
+    <title>Delete Contact</title>
     <style>
-            .box{
+           .box{
         width: auto;
         height: auto;
         margin: auto;
-        border: red;
-        border-radius: 10;
+        border: rgb(255, 0, 0);
+        padding: 10px;
+        border: 10px;
         text-align: center;
-        background-color:gold;
+        background-color:rgb(242, 19, 7);
     }
     </style>
-   
+    
 </head>
 <body>
-        <div class="box">Update Contact
-        <form method="post" action="/update">
+        <div class="box">Delete Contact
+         <form method="post" action="/delete">
             Search By name <input type="text" name="Search" value="{{name|e}}" ><button type="submit" name="action" value="search">go</button> <br>
             Name <input type="text" name="name" value="{{name|e}}" > <br>
-            Phone <input type="text" name="number" value="{{phoneNo|e}}"> <br>
-            New Email <input type="text" name="email" value="{{email|e}}"> <br>
-            <button type="submit" name="action" value="update" >Update Contact</button>
-        </form>
+            Phone <input type="text" name="phoneNo" value="{{phoneNo|e}}"> <br>
+            Email <input type="text" name="email" value="{{email|e}}"> <br>
+            <button type="submit" name="action" value="delete" >delete</button>
           
     </div>
 </body>
