@@ -48,14 +48,23 @@ def deleteContact():
                name,phoneNo,email = database_manager.searchByName(contactName)
                return render_template("delete.html",name=name,phoneNo=phoneNo,email=email,search=name)
         if button == "delete":
-               name=request.form['name']
-               database_manager.deleteContact(name)
+               name,phoneNo,email = database_manager.searchByName(contactName)
+               database_manager.deleteContact(name,phoneNo,email)
 
     return render_template("delete.html")
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    Name = "account"
+    Password = "password"
+    if request.method == 'POST':
+        if (request.form.get('name') == Name and 
+            request.form.get('password') == Password and 
+            request.form.get('action')):
+            return render_template("index.html")
+        else:
+            return render_template("form.html", name="invalid", password="invalid")
 
-@app.route('/')
-def program():
-     return render_template("index.html")
+    return render_template("form.html")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)
 

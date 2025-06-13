@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+</head>
+<body>
+    <form method="post">
+        Name: <input type="text" name="name" value="{{name|e}}"><br>
+        Password: <input type="text" name="password" value="{{password|e}}"><br>
+        <button type="submit" name="action" value="Login">Login</button>
+    </form>
+</body>
+</html>

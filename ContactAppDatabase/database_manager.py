@@ -31,21 +31,19 @@ def searchByName(contactName):
         return "name not found","phone no not found","email not found"
 
     
-def deleteContact(name):
+def deleteContact(name,phoneNo,email):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor() 
     query = f'''
     DELETE FROM contactsList
-    WHERE name = '{name}';
+    WHERE name= '{name}' AND phoneNo= '{phoneNo}' AND email= '{email}' ;
     '''
     cursor.execute(query)
     conn.commit()
     conn.close()  
 
 def updateContact(contactName, newName, phoneNo, email):
-    print(phoneNo)
-    print(newName)
-    print(email)
+
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()  
     query = f'''
