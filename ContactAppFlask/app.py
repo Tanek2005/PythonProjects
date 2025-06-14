@@ -4,11 +4,11 @@ import pandas as pd
 from flask import Flask,request,render_template
 import sys
 from pathlib import Path
-library_path = Path(__file__).resolve().parent.parent/ "Library"
-sys.path.append(str(library_path))
 
-import contact_manager
+library_path1 = Path(__file__).resolve().parent.parent/ "ContactAppDatabase"
+sys.path.append(str(library_path1))
 
+import database_manager
 
 app=Flask(__name__)
 
@@ -20,13 +20,14 @@ def updateContact():
           contactName = request.form['Search']
           button=request.form.get('action')
           if button == "search":
-               name,phoneNo,email = contact_manager.searchByName(contactName)
+               name,phoneNo,email = database_manager.searchByName(contactName)
                return render_template("update.html",name=name,phoneNo=phoneNo,email=email,search=name)       
           if button == "update":
-               newName = request.form.get('name')
-               newPhone = request.form.get('number')
-               newEmail = request.form.get('email')
-               contact_manager.updateContact(contactName,newName,newPhone,newEmail)   
+              newName = request.form.get('name')
+              newPhone = request.form.get('number')
+              newEmail = request.form.get('email')
+              name,phoneNo,email = database_manager.searchByName(contactName)
+              database_manager.updateContact(contactName, newName, newPhone, newEmail,phoneNo,email)
      return render_template('update.html')
 
 @app.route('/add',methods=['GET','POST'])
@@ -35,7 +36,7 @@ def addContact():
          name = request.form['name']
          phone_no = request.form['phone']
          email = request.form['email']
-         contact_manager.addContact(name,phone_no,email)
+         database_manager.addContact(name,phone_no,email)
          
     return render_template("addcontact.html")
                 
@@ -45,17 +46,25 @@ def deleteContact():
         contactName = request.form['Search']
         button=request.form.get('action')
         if button == "search":
-               name,phoneNo,email = contact_manager.searchByName(contactName)
+               name,phoneNo,email = database_manager.searchByName(contactName)
                return render_template("delete.html",name=name,phoneNo=phoneNo,email=email,search=name)
         if button == "delete":
-               name=request.form['name']
-               contact_manager.deleteContact(name)
+               name,phoneNo,email = database_manager.searchByName(contactName)
+               database_manager.deleteContact(name,phoneNo,email)
 
     return render_template("delete.html")
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    Name = "account"
+    Password = "password"
+    if request.method == 'POST':
+        if (request.form.get('name') == Name and 
+            request.form.get('password') == Password and 
+            request.form.get('action')):
+            return render_template("index.html")
+        else:
+            return render_template("form.html", name="invalid", password="invalid")
 
-@app.route('/')
-def program():
-     return render_template("index.html")
+    return render_template("form.html")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)
-

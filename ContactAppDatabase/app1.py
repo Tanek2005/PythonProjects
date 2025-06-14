@@ -26,7 +26,8 @@ def updateContact():
               newName = request.form.get('name')
               newPhone = request.form.get('number')
               newEmail = request.form.get('email')
-              database_manager.updateContact(contactName, newName, newPhone, newEmail)
+              name,phoneNo,email = database_manager.searchByName(contactName)
+              database_manager.updateContact(name, newName, newPhone, newEmail,phoneNo,email)
      return render_template('update.html')
 
 @app.route('/add',methods=['GET','POST'])
@@ -54,6 +55,19 @@ def deleteContact():
     return render_template("delete.html")
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    import sqlite3
+
+    conn = sqlite3.connect("contacts_database.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+CREATE TABLE IF NOT EXISTS contacts(
+    name TEXT,
+    phoneNo TEXT,
+    email TEXT
+)
+''')
+    conn.commit()
+    conn.close()
     Name = "account"
     Password = "password"
     if request.method == 'POST':
