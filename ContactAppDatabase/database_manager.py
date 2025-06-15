@@ -2,6 +2,27 @@ import sqlite3
 
 fileName = 'contacts_database.db'
 
+def addUser(name, password):
+    conn = sqlite3.connect(fileName)
+    cursor = conn.cursor()
+    cursor.execute(f'''
+    INSERT INTO users(name, password) VALUES ('{name}', '{password}')
+    ''')
+    conn.commit()
+    conn.close()
+
+def checkUser(username, password):
+    conn = sqlite3.connect(fileName)
+    cursor = conn.cursor()
+    query = f'''
+    SELECT * FROM users
+    WHERE name='{username}' AND password='{password}'
+    '''
+    cursor.execute(query)
+    result = cursor.fetchone()
+    conn.close()
+    return 1 if result else 0
+
 def addContact(name, phoneNo, email):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
@@ -29,27 +50,25 @@ def searchByName(contactName):
     else:
         return ("name not found", "phone no not found", "email not found")
 
-    
-def deleteContact(name,phoneNo,email):
+def deleteContact(name, phoneNo, email):
     conn = sqlite3.connect(fileName)
-    cursor = conn.cursor() 
+    cursor = conn.cursor()
     query = f'''
     DELETE FROM contacts
-    WHERE name= '{name}' AND phoneNo= '{phoneNo}' AND email= '{email}' ;
+    WHERE name= '{name}' AND phoneNo= '{phoneNo}' AND email= '{email}'
     '''
     cursor.execute(query)
     conn.commit()
-    conn.close()  
+    conn.close()
 
 def updateContact(contactName, newName, newphoneNo, newEmail, phoneNo, email):
-
     conn = sqlite3.connect(fileName)
-    cursor = conn.cursor()  
+    cursor = conn.cursor()
     query = f'''
-UPDATE contacts
-SET name = '{newName}', phoneNo = '{newphoneNo}', email = '{newEmail}'
-WHERE name = '{contactName}' AND phoneNo = '{phoneNo}' AND email = '{email}';
+    UPDATE contacts
+    SET name = '{newName}', phoneNo = '{newphoneNo}', email = '{newEmail}'
+    WHERE name = '{contactName}' AND phoneNo = '{phoneNo}' AND email = '{email}'
     '''
     cursor.execute(query)
     conn.commit()
-    conn.close()  
+    conn.close()
