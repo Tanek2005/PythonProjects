@@ -1,4 +1,7 @@
 import sqlite3
+from datetime import datetime
+
+current= datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 fileName = 'contacts_database.db'
 
@@ -14,18 +17,15 @@ def getId(username):
     result = cursor.fetchone()
     conn.close()
     if result:
-        return result
+        return result[0]
     else :
         return 0
-
-
-
 
 def addUser(name, password):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
     cursor.execute(f'''
-    INSERT INTO users(name, password) VALUES ('{name}', '{password}')
+    INSERT INTO users(name, password, createdate, updatedate) VALUES ('{name}', '{password}', '{current}', '{current}')
     ''')
     conn.commit()
     conn.close()
@@ -42,12 +42,12 @@ def checkUser(username, password):
     conn.close()
     return 1 if result else 0
 
-def addContact(id,name,phoneNo,email):
+def addContact(useid,name,phoneNo,email):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
     query = f'''
-    INSERT INTO contacts(name,phoneNo,email,userid)
-    VALUES ('{name}', '{phoneNo}', '{email}', '{id}')
+    INSERT INTO contacts(name,phoneNo,email,userid,createdate,updatedate)
+    VALUES ('{name}', '{phoneNo}', '{email}', '{useid}','{current}', '{current}')
     '''
     cursor.execute(query)
     conn.commit()
@@ -85,8 +85,9 @@ def updateContact(id,contactName, newName, newphoneNo, newEmail, phoneNo, email)
     cursor = conn.cursor()
     query = f'''
     UPDATE contacts
-    SET name = '{newName}', phoneNo = '{newphoneNo}', email = '{newEmail}'
+    SET name = '{newName}', phoneNo = '{newphoneNo}', email = '{newEmail}', updatedate='{current}'
     WHERE name = '{contactName}' AND phoneNo = '{phoneNo}' AND email = '{email}' AND userid='{id}'
+
     '''
     cursor.execute(query)
     conn.commit()
