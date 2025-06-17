@@ -53,13 +53,13 @@ def addContact(useid,name,phoneNo,email):
     conn.commit()
     conn.close()
 
-def searchByName(contactName):
+def searchByName(contactName,user_id):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
     query = f'''
     SELECT name, phoneNo, email
     FROM contacts
-    WHERE name = '{contactName}'
+    WHERE name = '{contactName}' AND userid='{user_id}'
     '''
     cursor.execute(query)
     result = cursor.fetchone()
@@ -69,24 +69,24 @@ def searchByName(contactName):
     else:
         return ("name not found", "phone no not found", "email not found")
 
-def deleteContact(id, name, phoneNo, email):
+def deleteContact(useid, name, phoneNo, email):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
     query = f'''
     DELETE FROM contacts
-    WHERE name= '{name}' AND phoneNo= '{phoneNo}' AND email= '{email}' AND userid='{id}'
+    WHERE name= '{name}' AND phoneNo= '{phoneNo}' AND email= '{email}' AND userid='{useid}'
     '''
     cursor.execute(query)
     conn.commit()
     conn.close()
 
-def updateContact(id,contactName, newName, newphoneNo, newEmail, phoneNo, email):
+def updateContact(useid,contactName, newName, newphoneNo, newEmail, phoneNo, email):
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
     query = f'''
     UPDATE contacts
     SET name = '{newName}', phoneNo = '{newphoneNo}', email = '{newEmail}', updatedate='{current}'
-    WHERE name = '{contactName}' AND phoneNo = '{phoneNo}' AND email = '{email}' AND userid='{id}'
+    WHERE name = '{contactName}' AND phoneNo = '{phoneNo}' AND email = '{email}' AND userid='{useid}'
 
     '''
     cursor.execute(query)
