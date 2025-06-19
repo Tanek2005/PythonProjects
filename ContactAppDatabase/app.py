@@ -5,6 +5,9 @@ app = Flask(__name__)
 
 @app.route('/adduser', methods=['GET', 'POST'])
 def addUser():
+    user_Id = request.cookies.get('user_id')
+    if(user_Id):
+        return render_template('index.html')
     if request.method == 'POST':
         username = request.form.get('name')
         password = request.form.get('password')
@@ -17,33 +20,9 @@ def addUser():
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    conn = sqlite3.connect("contacts_database.db")
-    cursor = conn.cursor()
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        password TEXT,
-        createdate TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedate TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-    ''')
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS contacts(
-        id INTEGER PRIMARY KEY,
-        userid INTEGER,
-        name TEXT,
-        phoneNo TEXT,
-        email TEXT,
-        createdate TEXT DEFAULT CURRENT_TIMESTAMP,
-        updatedate TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (userid) REFERENCES users(id)
-    )
-    ''')
-    cursor.execute('''
-DROP TABLE IF EXISTS contactsList ''')
-    conn.commit()
-    conn.close()
+    user_Id= request.cookies.get('user_id')
+    if(user_Id):
+        return render_template('index.html')
     if request.method == 'POST':
         username = request.form.get('name')
         password = request.form.get('password')
@@ -63,7 +42,7 @@ DROP TABLE IF EXISTS contactsList ''')
 
 @app.route('/add', methods=['GET', 'POST'])
 def addContact():
-    user_id = request.cookies.get('user_id')
+    user_id= request.cookies.get('user_id')
     if request.method == 'POST':
         name = request.form['name']
         phoneNo = request.form['phone']
