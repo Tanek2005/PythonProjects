@@ -1,0 +1,8 @@
+create a contacts web app using flask and sqlite db.
+It should have folloing pages :
+1. A login page which takes username and password as credentials.
+2. A register page for adding new users which takes username and password
+3. A page for adding contacts which has the feilds name,phoneNo and email
+4. A page for updating contacts 
+5. A page for deleting contacts
+6. A page for seaching contacts
