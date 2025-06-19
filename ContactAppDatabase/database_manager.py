@@ -20,6 +20,22 @@ def getId(username):
         return result[0]
     else :
         return 0
+    
+def checkId(user_id):
+    conn = sqlite3.connect(fileName)
+    cursor = conn.cursor()
+    query = f'''
+    SELECT id
+    FROM users
+    WHERE name = '{user_id}'
+    '''
+    cursor.execute(query)
+    result = cursor.fetchone()
+    conn.close()
+    if result:
+        return result[0]
+    else :
+        return 0
 
 def addUser(name, password):
     conn = sqlite3.connect(fileName)
