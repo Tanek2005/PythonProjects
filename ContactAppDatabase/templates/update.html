@@ -1,32 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Contact</title>
-    <style>
-            .box{
-        width: auto;
-        height: auto;
-        margin: auto;
-        border: red;
-        border-radius: 10;
-        text-align: center;
-        background-color:gold;
-    }
-    </style>
-   
-</head>
-<body>
-        <div class="box">Update Contact
-        <form method="post" action="/update">
-            Search By name <input type="text" name="Search" value="{{name|e}}" ><button type="submit" name="action" value="search">go</button> <br>
-            Name <input type="text" name="name" value="{{name|e}}" > <br>
-            Phone <input type="text" name="number" value="{{phoneNo|e}}"> <br>
-            New Email <input type="text" name="email" value="{{email|e}}"> <br>
-            <button type="submit" name="action" value="update" >Update Contact</button>
-        </form>
-          
+{% extends "base.html" %}
+
+{% block title %}Update Contact - Contact App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0"><i class="fas fa-user-edit me-2"></i>Update Contact</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="/update">
+                        <!-- Search Section -->
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="fas fa-search me-2"></i>Find Contact</h5>
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-lg" name="Search" 
+                                       value="{{ search if search else '' }}" placeholder="Search by name" required>
+                                <button class="btn btn-primary" type="submit" name="action" value="search">
+                                    <i class="fas fa-search me-1"></i> Search
+                                </button>
+                            </div>
+                        </div>
+
+                        {% if name %}
+                        <div class="border-top pt-4 mt-4">
+                            <h5 class="mb-4"><i class="fas fa-user-edit me-2"></i>Update Contact Details</h5>
+                            
+                            <div class="mb-4">
+                                <label for="name" class="form-label">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                                           value="{{ name|e }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="number" class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control form-control-lg" id="number" name="number" 
+                                           value="{{ phoneNo|e }}" required pattern="[0-9]{10}">
+                                </div>
+                                <div class="form-text">Enter a 10-digit phone number</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="email" class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                                           value="{{ email|e }}">
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/" class="btn btn-outline-secondary me-md-2">
+                                    <i class="fas fa-arrow-left me-1"></i> Cancel
+                                </a>
+                                <button type="submit" name="action" value="update" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Update Contact
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            
+            {% if not name %}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>How to update a contact</h5>
+                    <ol class="mb-0">
+                        <li class="mb-2">Enter the name of the contact you want to update and click "Search"</li>
+                        <li class="mb-2">Once the contact details appear, make your changes to the fields</li>
+                        <li>Click "Update Contact" to save your changes</li>
+                    </ol>
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

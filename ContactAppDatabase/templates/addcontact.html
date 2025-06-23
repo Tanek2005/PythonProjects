@@ -1,31 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Contact</title>
-    <style>
-           .box{
-        width: auto;
-        height: auto;
-        margin: auto;
-        border: red;
-        border-radius: 10;
-        text-align: center;
-        background-color:rgb(16, 203, 50);
-    }
-    </style>
-    
-</head>
-<body>
-        <div class="box">Add Contact
-        <form method='post' action="/add">
-        Name : <input type="text" name="name" > <br>
-        Phone : <input type="text" name="phone"> <br>
-        email: <input type="text" name="email"> <br>
-            <button type="submit" >Add</button>
-        </form>
-          
+{% extends "base.html" %}
+
+{% block title %}Add Contact - Contact App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0"><i class="fas fa-user-plus me-2"></i>Add New Contact</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="/add">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control form-control-lg" id="name" name="name" required 
+                                       placeholder="Enter full name">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="tel" class="form-control form-control-lg" id="phone" name="phone" required
+                                       placeholder="Enter phone number" pattern="[0-9]{10}">
+                            </div>
+                            <div class="form-text">Please enter a 10-digit phone number</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control form-control-lg" id="email" name="email"
+                                       placeholder="Enter email address">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Contact
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Tips for adding contacts</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="fas fa-info-circle text-primary me-2"></i>Make sure the phone number is correct before saving</li>
+                        <li class="mb-2"><i class="fas fa-info-circle text-primary me-2"></i>Adding an email helps you reach contacts easily</li>
+                        <li><i class="fas fa-info-circle text-primary me-2"></i>You can update contact details later if needed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

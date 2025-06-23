@@ -1,15 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new user</title>
-</head>
-<body>
-    <form method="post">
-        create username: <input type="text" name="name" value="{{name|e}}"><br>
-        create password : <input type="text" name="password" value="{{password|e}}"><br>
-        <button type="submit" name="action" value="add">Add</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Create Account - Contact App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">Create Your Account</h2>
+                    <p class="mb-0">Join ContactApp today</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="/adduser">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Choose a Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user-plus"></i></span>
+                                <input type="text" class="form-control form-control-lg" id="name" name="name" required 
+                                       placeholder="Enter a username" value="{{ name|e if name }}">
+                            </div>
+                            <div class="form-text">This will be your login username</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Create a Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                       required placeholder="Create a strong password">
+                            </div>
+                            <div class="form-text">Use at least 8 characters with a mix of letters, numbers, and symbols</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Already have an account? 
+                                <a href="/" class="text-decoration-none">Sign in here</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <div class="d-inline-block text-start">
+                    <h5 class="mb-3">Why join ContactApp?</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Securely store all your contacts</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Access from anywhere, anytime</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Easy contact management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,16 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
-</head>
-<body>
-    <form method="post">
-        Name: <input type="text" name="name" value="{{name|e}}"><br>
-        Password: <input type="text" name="password" value="{{password|e}}"><br>
-        <button type="submit" name="action" value="Login">Login</button>
-        <button type="submit" name="action" value="add">Add new user</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Login - Contact App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">Welcome Back</h2>
+                    <p class="mb-0">Please login to your account</p>
+                </div>
+                <div class="card-body p-4">
+                    {% if name == "invalid" %}
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>Invalid username or password. Please try again.
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="/">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control form-control-lg" id="name" name="name" required 
+                                       placeholder="Enter your username" value="{{ name if name != 'invalid' else '' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                                       required placeholder="Enter your password">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" name="action" value="Login" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? 
+                                <button type="submit" name="action" value="add" class="btn btn-link p-0 align-baseline">
+                                    Sign up here
+                                </button>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <p class="text-muted">© 2025 ContactApp. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
