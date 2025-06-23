@@ -3,12 +3,33 @@ import sqlite3
 import database_manager
 app = Flask(__name__)
 
-@app.route('/adduser', methods=['GET'])
-def addUser():
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
     user_Id = request.cookies.get('user_id')
     if user_Id:
-        return render_template('index.html')
-    return render_template('AddUserForm.html')
+        return redirect('/')
+    
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('name', '').strip()
+        password = request.form.get('password', '').strip()
+        
+        if not username or not password:
+            error = "Both username and password are required"
+        else:
+            success, message = database_manager.addUser(username, password)
+            if success:
+                user_id = database_manager.getId(username)
+                if user_id:
+                    resp = make_response(redirect('/'))
+                    resp.set_cookie('user_id', str(user_id), max_age=60*60*24*7)
+                    return resp
+                else:
+                    error = "Failed to log in after registration. Please try logging in."
+            else:
+                error = message or "Failed to create user"
+    
+    return render_template('signup.html', error=error)
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -27,16 +48,7 @@ def login():
             else:
                 return render_template('form.html', name="invalid", password="invalid")
         elif request.form.get('action') == 'add':
-            username = request.form.get('name')
-            password = request.form.get('password')
-            if username and password:
-                database_manager.addUser(username, password)
-                user_id = database_manager.getId(username)
-                if user_id:
-                    resp = make_response(render_template('index.html'))
-                    resp.set_cookie('user_id', str(user_id), max_age=60*60*24*7)
-                    return resp
-            return redirect('/adduser')
+            return redirect('/signup')
 
     return render_template("form.html")
 

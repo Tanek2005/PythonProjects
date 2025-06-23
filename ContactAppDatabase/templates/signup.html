@@ -1,19 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Create Account - Contact App{% endblock %}
+{% block title %}Sign Up - Contact App{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8 col-lg-6">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white text-center py-3">
                     <h2 class="mb-0">Create Your Account</h2>
-                    <p class="mb-0">Join ContactApp today</p>
+                    <p class="mb-0">Join ContactApp to manage your contacts</p>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST" action="/">
-                        <input type="hidden" name="action" value="add">
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="/signup">
                         <div class="mb-4">
                             <label for="name" class="form-label">Choose a Username</label>
                             <div class="input-group">
@@ -46,17 +51,6 @@
                             </p>
                         </div>
                     </form>
-                </div>
-            </div>
-            
-            <div class="text-center mt-4">
-                <div class="d-inline-block text-start">
-                    <h5 class="mb-3">Why join ContactApp?</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Securely store all your contacts</li>
-                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Access from anywhere, anytime</li>
-                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Easy contact management</li>
-                    </ul>
                 </div>
             </div>
         </div>
