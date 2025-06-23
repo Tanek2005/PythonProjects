@@ -12,7 +12,8 @@
                     <p class="mb-0">Join ContactApp today</p>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST" action="/adduser">
+                    <form method="POST" action="/">
+                        <input type="hidden" name="action" value="add">
                         <div class="mb-4">
                             <label for="name" class="form-label">Choose a Username</label>
                             <div class="input-group">

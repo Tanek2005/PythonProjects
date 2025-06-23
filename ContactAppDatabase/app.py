@@ -3,19 +3,11 @@ import sqlite3
 import database_manager
 app = Flask(__name__)
 
-@app.route('/adduser', methods=['GET', 'POST'])
+@app.route('/adduser', methods=['GET'])
 def addUser():
     user_Id = request.cookies.get('user_id')
-    if(user_Id):
+    if user_Id:
         return render_template('index.html')
-    if request.method == 'POST':
-        username = request.form.get('name')
-        password = request.form.get('password')
-        database_manager.addUser(username, password)
-        user_id = database_manager.getId(username)
-        resp = make_response(render_template('index.html'))
-        resp.set_cookie('user_id', str(user_id), max_age=60*60*24*7)
-        return resp
     return render_template('AddUserForm.html')
 
 @app.route('/', methods=['GET', 'POST'])
@@ -35,6 +27,15 @@ def login():
             else:
                 return render_template('form.html', name="invalid", password="invalid")
         elif request.form.get('action') == 'add':
+            username = request.form.get('name')
+            password = request.form.get('password')
+            if username and password:
+                database_manager.addUser(username, password)
+                user_id = database_manager.getId(username)
+                if user_id:
+                    resp = make_response(render_template('index.html'))
+                    resp.set_cookie('user_id', str(user_id), max_age=60*60*24*7)
+                    return resp
             return redirect('/adduser')
 
     return render_template("form.html")
