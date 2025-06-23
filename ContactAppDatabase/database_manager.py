@@ -120,21 +120,31 @@ def addContact(useid,name,phoneNo,email):
     conn.commit()
     conn.close()
 
-def searchByName(contactName,user_id):
+def get_username(user_id):
+    """Get username by user ID"""
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
-    query = f'''
-    SELECT name, phoneNo, email
-    FROM contacts
-    WHERE name = '{contactName}' AND userid='{user_id}'
-    '''
-    cursor.execute(query)
-    result = cursor.fetchone()
-    conn.close()
-    if result:
-        return result
-    else:
-        return ("name not found", "phone no not found", "email not found")
+    try:
+        cursor.execute("SELECT name FROM users WHERE id = ?", (user_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None
+    finally:
+        conn.close()
+
+def searchByName(contact_name, user_id):
+    """Search for a contact by name for a specific user"""
+    conn = sqlite3.connect(fileName)
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            SELECT name, phoneNo, email
+            FROM contacts
+            WHERE name = ? AND userid = ?
+        ''', (contact_name, user_id))
+        result = cursor.fetchone()
+        return result if result else ("name not found", "phone no not found", "email not found")
+    finally:
+        conn.close()
 
 def deleteContact(useid, name, phoneNo, email):
     conn = sqlite3.connect(fileName)
@@ -147,15 +157,32 @@ def deleteContact(useid, name, phoneNo, email):
     conn.commit()
     conn.close()
 
-def updateContact(useid,contactName, newName, newphoneNo, newEmail, phoneNo, email):
+def updateContact(user_id, old_name, new_name, new_phone, new_email, old_phone, old_email):
+    """Update a contact's information"""
     conn = sqlite3.connect(fileName)
     cursor = conn.cursor()
-    query = f'''
-    UPDATE contacts
-    SET name = '{newName}', phoneNo = '{newphoneNo}', email = '{newEmail}', updatedate='{current}'
-    WHERE name = '{contactName}' AND phoneNo = '{phoneNo}' AND email = '{email}' AND userid='{useid}'
+    try:
+        cursor.execute('''
+            UPDATE contacts 
+            SET name = ?, phoneNo = ?, email = ?
+            WHERE userid = ? AND name = ? AND phoneNo = ? AND email = ?
+        ''', (new_name, new_phone, new_email, user_id, old_name, old_phone, old_email))
+        conn.commit()
+        return cursor.rowcount > 0
+    finally:
+        conn.close()
 
-    '''
-    cursor.execute(query)
-    conn.commit()
-    conn.close()
+def get_all_contacts(user_id):
+    """Get all contacts for a specific user"""
+    conn = sqlite3.connect(fileName)
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''
+            SELECT name, phoneNo, email 
+            FROM contacts 
+            WHERE userid = ?
+            ORDER BY name
+        ''', (user_id,))
+        return cursor.fetchall()
+    finally:
+        conn.close()

@@ -3,56 +3,10 @@
 {% block title %}Dashboard - Contact App{% endblock %}
 
 {% block content %}
-<div class="welcome-section text-center py-5">
-    <div class="container">
-        <h1 class="display-4 fw-bold mb-3">Welcome to ContactApp</h1>
-        <p class="lead mb-4">Manage your contacts easily and efficiently</p>
-        <a href="/add" class="btn btn-light btn-lg">
-            <i class="fas fa-plus-circle me-2"></i>Add New Contact
-        </a>
-    </div>
-</div>
 
-<div class="container">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100 p-4 text-center">
-                <div class="feature-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h3>Add Contacts</h3>
-                <p>Easily add new contacts to your address book with all necessary details.</p>
-                <a href="/add" class="btn btn-primary mt-2">Add Contact</a>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card h-100 p-4 text-center">
-                <div class="feature-icon">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <h3>Update Contacts</h3>
-                <p>Keep your contact information up to date with our simple update interface.</p>
-                <a href="/update" class="btn btn-primary mt-2">Update Contact</a>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card h-100 p-4 text-center">
-                <div class="feature-icon">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-                <h3>Delete Contacts</h3>
-                <p>Remove contacts you no longer need with just a few clicks.</p>
-                <a href="/delete" class="btn btn-danger mt-2">Delete Contact</a>
-            </div>
-        </div>
-    </div>
-    
     <div class="row mt-5">
         <div class="col-12">
             <div class="card p-4">
-                <h2 class="text-center mb-4">Quick Actions</h2>
                 <div class="d-flex flex-wrap justify-content-center gap-3 action-buttons">
                     <a href="/add" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Add New Contact

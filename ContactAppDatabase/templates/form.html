@@ -12,19 +12,19 @@
                     <p class="mb-0">Please login to your account</p>
                 </div>
                 <div class="card-body p-4">
-                    {% if name == "invalid" %}
+                    {% if error %}
                     <div class="alert alert-danger" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>Invalid username or password. Please try again.
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
                     </div>
                     {% endif %}
                     
-                    <form method="POST" action="/">
+                    <form method="POST" action="/login">
                         <div class="mb-3">
                             <label for="name" class="form-label">Username</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                                 <input type="text" class="form-control form-control-lg" id="name" name="name" required 
-                                       placeholder="Enter your username" value="{{ name if name != 'invalid' else '' }}">
+                                       placeholder="Enter your username" value="{{ request.form.name if request.form.name }}">
                             </div>
                         </div>
                         
@@ -38,7 +38,7 @@
                         </div>
                         
                         <div class="d-grid gap-2 mb-3">
-                            <button type="submit" name="action" value="Login" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-sign-in-alt me-2"></i>Login
                             </button>
                         </div>
@@ -52,10 +52,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
-            
-            <div class="text-center mt-3">
-                <p class="text-muted">© 2025 ContactApp. All rights reserved.</p>
             </div>
         </div>
     </div>

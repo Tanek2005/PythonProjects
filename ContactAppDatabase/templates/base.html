@@ -111,28 +111,24 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contacts">
+                            <i class="fas fa-address-book me-1"></i>Contacts
+                        </a>
+                    </li>
+                </ul>
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/add"><i class="fas fa-plus-circle me-1"></i>Add Contact</a>
+                    <li class="nav-item me-3">
+                        <span class="nav-link text-light">
+                            <i class="fas fa-user me-1"></i>{{ username }}
+                        </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/update"><i class="fas fa-edit me-1"></i>Update Contact</a>
+                        <a class="nav-link text-danger fw-bold" href="/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/delete"><i class="fas fa-trash-alt me-1"></i>Delete Contact</a>
-                    </li>
-                    {% if user_id %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup">Sign Up</a>
-                    </li>
-                    {% endif %}
                 </ul>
             </div>
         </div>

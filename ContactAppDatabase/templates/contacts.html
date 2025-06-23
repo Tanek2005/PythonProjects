@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}My Contacts - Contact App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">My Contacts</h1>
+        <span class="badge bg-primary rounded-pill">{{ contact_count }} contacts</span>
+    </div>
+    
+    {% if contacts %}
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contacts %}
+                    <tr>
+                        <td class="align-middle">
+                            <i class="fas fa-user-circle me-2 text-primary"></i>
+                            {{ contact[0] }}
+                        </td>
+                        <td class="align-middle">
+                            <i class="fas fa-phone me-2 text-muted"></i>
+                            {{ contact[1] }}
+                        </td>
+                        <td class="align-middle">
+                            <i class="fas fa-envelope me-2 text-muted"></i>
+                            {{ contact[2] if contact[2] else '—' }}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a href="/update?search={{ contact[0] }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="/delete?search={{ contact[0] }}" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fas fa-address-book fa-4x text-muted"></i>
+        </div>
+        <h3 class="h5 mb-3">No contacts found</h3>
+        <p class="text-muted mb-4">You haven't added any contacts yet. Get started by adding your first contact.</p>
+        <a href="/add" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add Contact
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
