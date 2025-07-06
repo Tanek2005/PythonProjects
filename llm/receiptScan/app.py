@@ -1,6 +1,8 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, render_template, redirect, make_response, request
-from werkzeug.utils import secure_filename
 from recipt_functions import (
     extract_pdf_text,
     image_to_text,
@@ -15,11 +17,9 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
-
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -39,7 +39,6 @@ def login():
     elif action == "signup":
         return redirect("/signup")
 
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -51,10 +50,7 @@ def signup():
             resp = make_response(redirect("/upload"))
             resp.set_cookie("user_id", str(user_id))
             return resp
-        else:
-            return "Please provide both username and password.", 400
     return render_template("signup.html")
-
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -67,35 +63,43 @@ def upload():
         if not uploaded_file:
             return "No file uploaded", 400
 
-        safe_filename = secure_filename(uploaded_file.filename)
-        filepath = os.path.join(UPLOAD_FOLDER, safe_filename)
-        uploaded_file.save(filepath)
+        filename = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
+        uploaded_file.save(filename)
 
-        try:
-            if filepath.lower().endswith(".pdf"):
-                text = extract_pdf_text(filepath)
-            else:
-                text = image_to_text(filepath)
-        except ValueError as e:
-            return f"File processing error: {e}", 400
+        if filename.lower().endswith(".pdf"):
+            text = extract_pdf_text(filename)
+        else:
+            text = image_to_text(filename)
 
         data = query_values(text)
-        items = ",".join(data["items"])
-        quantity = ",".join(data["quantity"])
 
-        addData(
-            user_id,
-            items,
-            quantity,
-            data["store_name"],
-            data["date_of_transaction"],
-            data["total_amount"],
-        )
+        items = ",".join(data.get("items", []))
+        quantity = ",".join(data.get("quantity", []))
+        store_name = data.get("store_name") or "Unknown Store"
+        date_of_transaction = data.get("date_of_transaction") or "Unknown Date"
+        total_amount = data.get("total_amount") or "0.0"
 
-        return "Receipt data saved successfully."
+        if items and total_amount and user_id:
+            addData(
+                user_id,
+                items,
+                quantity,
+                store_name,
+                date_of_transaction,
+                total_amount,
+            )
+            return "Receipt data saved successfully"
+        else:
+            return f'''Empty receipt:
+            items: {items},
+            quantity: {quantity},
+            store: {store_name},
+            date: {date_of_transaction},
+            amount: {total_amount},
+            Text: {text}
+            '''
 
     return render_template("upload.html")
-
 
 if __name__ == "__main__":
     app.run(debug=True)
