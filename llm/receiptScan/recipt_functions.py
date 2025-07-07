@@ -157,3 +157,46 @@ def addData(user_id, items, quantity, storename, date, total_amount):
     )
     conn.commit()
     conn.close()
+
+def get_user_receipts(user_id):
+    conn = sqlite3.connect(fileName)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT DISTINCT
+            item,
+            quantity,
+            storename,
+            dateoftransaction,
+            total_amount
+        FROM receipts
+        WHERE user_id = ?
+        ORDER BY dateoftransaction DESC
+        """,
+        (user_id,),
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+def simple_query_receipts(receipts_rows, user_question):
+    receipts_text = "\n\n".join(
+        f"Items: {r['item']}\nQuantities: {r['quantity']}\nStore: {r['storename']}\nDate: {r['dateoftransaction']}\nTotal Amount: {r['total_amount']}"
+        for r in receipts_rows
+    )
+    if not receipts_text.strip():
+        return "You have no receipts to answer this question."
+    prompt = (
+        "Here is my list of receipts:\n\n"
+        f"{receipts_text}\n\n"
+        f"Question: {user_question}\n\n"
+        "Please answer in detail."
+    )
+    model = ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        google_api_key=os.environ["GOOGLE_API_KEY"],
+        convert_system_message_to_human=True
+    )
+    response = model.invoke(prompt)
+    return response.content.strip()

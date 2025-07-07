@@ -11,6 +11,8 @@ from recipt_functions import (
     checkId,
     addUser,
     addData,
+    get_user_receipts,
+    simple_query_receipts, 
 )
 
 app = Flask(__name__)
@@ -44,12 +46,21 @@ def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        if username and password:
-            addUser(username, password)
-            user_id = getId(username, password)
-            resp = make_response(redirect("/upload"))
-            resp.set_cookie("user_id", str(user_id))
-            return resp
+        if not username or not password:
+            return "Username and password are required.", 400
+        existing_user_id = getId(username, password)
+        if existing_user_id:
+            return "Username already exists. Please choose another.", 400
+
+        addUser(username, password)
+        user_id = getId(username, password)
+        if not user_id:
+            return "Error creating user. Please try again.", 500
+
+        resp = make_response(redirect("/upload"))
+        resp.set_cookie("user_id", str(user_id))
+        return resp
+
     return render_template("signup.html")
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -100,6 +111,24 @@ def upload():
             '''
 
     return render_template("upload.html")
+
+@app.route("/receipts", methods=["GET", "POST"])
+def receipts():
+    user_id = request.cookies.get("user_id")
+    if not checkId(user_id):
+        return redirect("/")
+
+    rows = get_user_receipts(user_id)
+
+    answer = None
+    query = ""
+
+    if request.method == "POST":
+        query = request.form.get("query", "").strip()
+        if query:
+            answer = simple_query_receipts(rows, query)
+
+    return render_template("receipts.html", receipts=rows, answer=answer, query=query)
 
 if __name__ == "__main__":
     app.run(debug=True)

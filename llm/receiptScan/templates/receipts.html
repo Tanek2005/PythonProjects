@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Receipts</title>
+</head>
+<body>
+  <h1>Your Receipts</h1>
+
+  <form method="POST" style="margin-bottom: 1em;">
+    <input type="text" name="query" placeholder="Ask something about your receipts..." value="{{ query or '' }}" style="width: 300px;">
+    <button type="submit">Ask</button>
+  </form>
+
+  {% if answer %}
+    <div style="background: #eef; padding: 1em; margin-bottom: 1em;">
+      <strong>Answer:</strong> {{ answer }}
+    </div>
+  {% endif %}
+
+  {% if receipts %}
+    <table border="1" cellpadding="5">
+      <tr>
+        <th>Items</th>
+        <th>Quantities</th>
+        <th>Store</th>
+        <th>Date</th>
+        <th>Total Amount</th>
+      </tr>
+      {% for r in receipts %}
+      <tr>
+        <td>{{ r["item"] }}</td>
+        <td>{{ r["quantity"] }}</td>
+        <td>{{ r["storename"] }}</td>
+        <td>{{ r["dateoftransaction"] }}</td>
+        <td>{{ r["total_amount"] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No receipts found.</p>
+  {% endif %}
+
+  <p><a href="/upload">Back to Upload</a></p>
+</body>
+</html>
