@@ -17,11 +17,24 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 fileName = "receipt_database.db"
 
-def extract_pdf_text(pdf_path):
+def extract_pdf_text(pdf_input):
     """
-    Extracts text from a PDF file. Falls back to OCR if no text is found.
+    Extracts text from a PDF file or file-like object. Falls back to OCR if no text is found.
     """
-    reader = PdfReader(pdf_path)
+    from PyPDF2 import PdfReader
+    from pdf2image import convert_from_bytes
+    import io
+    
+    # Accept both file paths and file-like objects
+    if hasattr(pdf_input, 'read'):
+        pdf_input.seek(0)
+        reader = PdfReader(pdf_input)
+        pdf_bytes = pdf_input.read()
+        pdf_input.seek(0)
+    else:
+        reader = PdfReader(pdf_input)
+        with open(pdf_input, 'rb') as f:
+            pdf_bytes = f.read()
     text = ""
     for page in reader.pages:
         page_text = page.extract_text()
@@ -29,18 +42,23 @@ def extract_pdf_text(pdf_path):
             text += page_text
     if text.strip():
         return text
-
     # OCR fallback
     ocr_text = ""
-    images = convert_from_path(pdf_path)
+    images = convert_from_bytes(pdf_bytes)
     for image in images:
         ocr_text += pytesseract.image_to_string(image, lang="eng") + "\n"
     return ocr_text.strip()
 
-def image_to_text(image_path):
-    with Image.open(image_path) as img:
-        img = img.convert("RGB")
-        return pytesseract.image_to_string(img, lang="eng").strip()
+def image_to_text(image_input):
+    from PIL import Image
+    import io
+    if hasattr(image_input, 'read'):
+        image_input.seek(0)
+        img = Image.open(image_input)
+    else:
+        img = Image.open(image_input)
+    img = img.convert("RGB")
+    return pytesseract.image_to_string(img, lang="eng").strip()
 
 def query_values(vector_or_text):
     api_key = os.environ.get("GOOGLE_API_KEY")

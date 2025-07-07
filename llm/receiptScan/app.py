@@ -70,45 +70,42 @@ def upload():
         return redirect("/")
 
     if request.method == "POST":
-        uploaded_file = request.files.get("document")
-        if not uploaded_file:
-            return "No file uploaded", 400
+        try:
+            uploaded_file = request.files.get("document")
+            if not uploaded_file:
+                return "No file uploaded", 400
 
-        file_stream = uploaded_file.stream
-        filename = uploaded_file.filename.lower()
+            file_stream = uploaded_file.stream
+            filename = uploaded_file.filename.lower()
 
-        if filename.endswith(".pdf"):
-            text = extract_pdf_text(file_stream)
-        else:
-            text = image_to_text(file_stream)
+            if filename.endswith(".pdf"):
+                text = extract_pdf_text(file_stream)
+            else:
+                text = image_to_text(file_stream)
 
-        data = query_values(text)
+            data = query_values(text)
 
-        items = ",".join(data.get("items", []))
-        quantity = ",".join(data.get("quantity", []))
-        store_name = data.get("store_name") or "Unknown Store"
-        date_of_transaction = data.get("date_of_transaction") or "Unknown Date"
-        total_amount = data.get("total_amount") or "0.0"
+            items = ",".join(data.get("items", []))
+            quantity = ",".join(data.get("quantity", []))
+            store_name = data.get("store_name") or "Unknown Store"
+            date_of_transaction = data.get("date_of_transaction") or "Unknown Date"
+            total_amount = data.get("total_amount") or "0.0"
 
-        if items and total_amount and user_id:
-            addData(
-                user_id,
-                items,
-                quantity,
-                store_name,
-                date_of_transaction,
-                total_amount,
-            )
-            return "Receipt data saved successfully"
-        else:
-            return f'''Empty receipt:
-            items: {items},
-            quantity: {quantity},
-            store: {store_name},
-            date: {date_of_transaction},
-            amount: {total_amount},
-            Text: {text}
-            '''
+            if items and total_amount and user_id:
+                addData(
+                    user_id,
+                    items,
+                    quantity,
+                    store_name,
+                    date_of_transaction,
+                    total_amount,
+                )
+                return "Receipt data saved successfully"
+            else:
+                return f'''Empty receipt:\nitems: {items},\nquantity: {quantity},\nstore: {store_name},\ndate: {date_of_transaction},\namount: {total_amount},\nText: {text}'''
+        except Exception as e:
+            import traceback
+            return f"Error processing upload: {e}\n\n{traceback.format_exc()}", 500
 
     return render_template("upload.html")
 
@@ -124,11 +121,16 @@ def receipts():
     query = ""
 
     if request.method == "POST":
-        query = request.form.get("query", "").strip()
-        if query:
-            answer = simple_query_receipts(rows, query)
+        try:
+            query = request.form.get("query", "").strip()
+            if query:
+                answer = simple_query_receipts(rows, query)
+        except Exception as e:
+            import traceback
+            answer = f"Error processing your question: {e}\n\n{traceback.format_exc()}"
 
     return render_template("receipts.html", receipts=rows, answer=answer, query=query)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
