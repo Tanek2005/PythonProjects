@@ -74,13 +74,13 @@ def upload():
         if not uploaded_file:
             return "No file uploaded", 400
 
-        filename = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
-        uploaded_file.save(filename)
+        file_stream = uploaded_file.stream
+        filename = uploaded_file.filename.lower()
 
-        if filename.lower().endswith(".pdf"):
-            text = extract_pdf_text(filename)
+        if filename.endswith(".pdf"):
+            text = extract_pdf_text(file_stream)
         else:
-            text = image_to_text(filename)
+            text = image_to_text(file_stream)
 
         data = query_values(text)
 
