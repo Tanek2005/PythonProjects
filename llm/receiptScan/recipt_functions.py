@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-load_dotenv() 
-
+load_dotenv()
+from langchain.chains import RetrievalQA
 import json
 import sqlite3
 import pytesseract
@@ -9,17 +9,33 @@ from PIL import Image, ImageFile
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.chains import RetrievalQA
 from langchain_core.documents import Document
+from PyPDF2 import PdfReader
+from pdf2image import convert_from_path
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 fileName = "receipt_database.db"
 
 def extract_pdf_text(pdf_path):
-    docs = PyPDFLoader(pdf_path).load()
-    return "\n".join(doc.page_content for doc in docs)
+    """
+    Extracts text from a PDF file. Falls back to OCR if no text is found.
+    """
+    reader = PdfReader(pdf_path)
+    text = ""
+    for page in reader.pages:
+        page_text = page.extract_text()
+        if page_text:
+            text += page_text
+    if text.strip():
+        return text
+
+    # OCR fallback
+    ocr_text = ""
+    images = convert_from_path(pdf_path)
+    for image in images:
+        ocr_text += pytesseract.image_to_string(image, lang="eng") + "\n"
+    return ocr_text.strip()
 
 def image_to_text(image_path):
     with Image.open(image_path) as img:
@@ -32,13 +48,19 @@ def query_values(vector_or_text):
         raise RuntimeError("GOOGLE_API_KEY not set in environment variables.")
 
     if isinstance(vector_or_text, str):
+        if not vector_or_text.strip():
+            raise ValueError("Text is empty after extraction. Nothing to embed.")
+
         doc = Document(page_content=vector_or_text)
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         chunks = text_splitter.split_documents([doc])
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+
         if not chunks:
             raise ValueError("No text chunks found to create embeddings.")
+
+        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         vectorstore = FAISS.from_documents(chunks, embeddings)
+
     else:
         vectorstore = vector_or_text
 
@@ -53,6 +75,7 @@ def query_values(vector_or_text):
         retriever=retriever,
         return_source_documents=True
     )
+
     prompt = (
         "Extract the following values from the receipt: "
         "items purchased, their quantities, the store name, the date of transaction, and the total amount. "
@@ -74,7 +97,7 @@ def query_values(vector_or_text):
         raise ValueError(f"Model response could not be parsed as JSON:\n\n{text}")
 
     if "total_amount" in data and data["total_amount"]:
-        data["total_amount"] = data["total_amount"].replace(",", ".")
+        data["total_amount"] = str(data["total_amount"]).replace(",", ".")
     else:
         data["total_amount"] = "0.0"
 
@@ -83,7 +106,7 @@ def query_values(vector_or_text):
         for q in data["quantity"]:
             if q is None:
                 q = "0"
-            q = q.replace(",", ".").strip()
+            q = str(q).replace(",", ".").strip()
             if not any(c.isdigit() for c in q):
                 q = "0"
             cleaned_quantities.append(q)
